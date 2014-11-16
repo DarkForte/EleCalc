@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="物质的名称：（中文，理想气体方程可不写）"/>
+    
+    <EditText
+        android:id = "@+id/materialID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="物质的名称"/>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="T(K), 必需"/>
+    <EditText
+        android:id="@+id/tID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="T(K), 必需"/>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="P(Pa)"/>
+    <EditText
+        android:id="@+id/pID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="P(Pa)"/>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="V(m³)"/>
+    <EditText
+        android:id="@+id/vID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="V(m³)"/>
+    
+	<Spinner
+        android:id="@+id/spinnerID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+	
+	<Button
+	    android:id="@+id/calcID"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+		android:text="Go!"/>
+	
+	<TextView
+	    android:id="@+id/answerID"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"/>
+	
+</LinearLayout>
