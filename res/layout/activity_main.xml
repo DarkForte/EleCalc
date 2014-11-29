@@ -28,17 +28,19 @@
         android:id="@+id/tID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
         android:hint="T(K), 必需"/>
     
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="P(Pa)"/>
+        android:text="P(MPa)"/>
     <EditText
         android:id="@+id/pID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="P(Pa)"/>
+        android:inputType="numberDecimal"
+        android:hint="P(MPa)，PV填写一个即可"/>
     
     <TextView
         android:layout_width="wrap_content"
@@ -48,7 +50,8 @@
         android:id="@+id/vID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="V(m³)"/>
+        android:inputType="numberDecimal"
+        android:hint="V(m³)，PV填写一个即可"/>
     
 	<Spinner
         android:id="@+id/spinnerID"
