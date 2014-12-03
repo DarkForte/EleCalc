@@ -70,7 +70,9 @@ class Solution
 
 public class MainActivity extends Activity 
 {
-	EditText name_box, t_box, p_box, v_box;
+	TextView mat_text;
+	EditText name_box, t_box, p_box, v_box, tc_box, pc_box, omega_box;
+	Button mode_btn;
 	Spinner choose_spinner;
 	Button go_button;
 	TextView ans_area;
@@ -79,6 +81,8 @@ public class MainActivity extends Activity
 	List<Formula> formula_list;
 	int f_type;
 	ArrayAdapter<Formula> adapter;
+	
+	boolean manual=false;
 	
 	final int PT2V=1, VT2P=2;
 	final double r=8.314; //R is defined in Android SDK so use r
@@ -146,29 +150,8 @@ public class MainActivity extends Activity
 		return null;
 	}
 	
-	/*double df_3(double a, double b, double c, double x)
-	{
-		return 3*a*x*x + 2*b*x + c;
-	}
-
-	double f_3(double a, double b, double c, double d, double x)
-	{
-		return a*x*x*x + b*x*x + c*x + d;
-	}*/
-	
 	Solution solve_3_equation(double a, double b, double c, double d) //solve cube equation
 	{
-		/*//newton iteration
-		double x0 = 0;
-		double eps = 1e-6;
-		while(true)
-		{
-			double y = f_3(a,b,c,d,x0);
-			if(Math.abs(y)<eps)
-				return x0;
-			double dy = df_3(a,b,c,x0);
-			x0 = x0-y/dy;
-		}*/
 		
 		//shengjin formula
 		double A = b*b - 3*a*c;
@@ -183,25 +166,36 @@ public class MainActivity extends Activity
 		{
 			double y1 = A*b + 3*a*(-B+Math.sqrt(delta))/2;
 			double y2 = A*b + 3*a*(-B-Math.sqrt(delta))/2;
-			double ans = (-b-Math.pow(y1, 1.0/3.0)+Math.pow(y2, 1.0/3.0))/(3*a);
+			
+			//math.pow cannot calc a^(1/3) if a<0  
+			double tmp_y1 = Math.abs(y1);
+			double tmp_y2 = Math.abs(y2);
+			double t1 = Math.pow(tmp_y1, 1.0/3.0);
+			double t2 = Math.pow(tmp_y2, 1.0/3.0);
+			if(y1<0)
+				t1=-t1;
+			if(y2<0)
+				t2=-t2;
+			
+			double ans = (-b-t1-t2)/(3*a);
 			return new Solution(1, ans);
 		}
 		else if(delta == 0)
 		{
 			double k = B/A;
-			if(-b/a + k > 0)
-				return new Solution(1, -b/a + k );
-			else
-				return new Solution(1, -k/2);
+			double x[] = new double[5];
+			x[1] = -b/a+k;
+			x[2] = -k/2;	
+			return new Solution(2, x);
 		}
 		else
 		{
-			double T= (2*A*b - 3*a*B) / (2*Math.pow(A,1.5) );
+			double T= (2*A*b - 3*a*B) / (2*Math.sqrt(A*A*A) );
 			double ceta = Math.acos(T);
 			double x[] = new double[5];
-			x[1] = (-b-2*Math.sqrt(A)*Math.cos(ceta/3))/(3*a);
-			x[2] = (-b+Math.sqrt(A)* ( Math.cos(ceta/3)+Math.sqrt(3)*Math.sin(ceta/3) ) )/(3*a);
-			x[3] = (-b+Math.sqrt(A)* ( Math.cos(ceta/3)-Math.sqrt(3)*Math.sin(ceta/3) ) )/(3*a);
+			x[1] = (-b - 2*Math.sqrt(A) * Math.cos(ceta/3) ) / (3*a);
+			x[2] = (-b + Math.sqrt(A)* ( Math.cos(ceta/3)+Math.sqrt(3.0)*Math.sin(ceta/3) ) )/(3*a);
+			x[3] = (-b + Math.sqrt(A)* ( Math.cos(ceta/3)-Math.sqrt(3.0)*Math.sin(ceta/3) ) )/(3*a);
 			return new Solution(3, x);
 		}
 	}
@@ -224,7 +218,9 @@ public class MainActivity extends Activity
 		else if(f_type == 2)
 		{
 			double a = 27* (r * now_e.tc) * (r * now_e.tc) / (64 * now_e.pc);
-			double b = (r * now_e.tc) / (8 * r * now_e.pc);
+			double b = (r * now_e.tc) / (8 * now_e.pc);
+			//System.out.println("a: "+a+" b: "+b);
+			
 			
 			if(type == VT2P)
 			{
@@ -236,7 +232,13 @@ public class MainActivity extends Activity
 			else
 			{
 				double p = arg;
-				Solution ans = solve_3_equation(p, -(b+r*t), a, a*b);
+				double A = p;
+				double B = -(p*b + r*t);
+				double C = a;
+				double D = -a*b;
+				
+				System.out.println("a " + A +" b " + B + " c "+ C +" d " + D);
+				Solution ans = solve_3_equation(A,B,C,D);
 				return ans;
 			}
 		}
@@ -245,7 +247,7 @@ public class MainActivity extends Activity
 			double a = 0.42748*(r * r * Math.pow(now_e.tc, 2.5));
 			a/=now_e.pc;
 			double b = 0.08664*(r * now_e.tc) / now_e.pc;
-			//System.out.println(a+ " " + b);
+			System.out.println(a+ " " + b);
 			if(type == VT2P)
 			{
 				double v = arg;
@@ -258,16 +260,17 @@ public class MainActivity extends Activity
 			{
 				double p = arg;
 				double A = p;
-				double B = r*t;
+				double B = -r*t;
 				double C = -p * b * b - b * r * t + a / Math.sqrt(t);
-				double D = -a / Math.sqrt(t) * b;
+				double D = -a*b / Math.sqrt(t);
+
 				Solution ans = solve_3_equation(A, B, C, D);
 				return ans;
 			}
 		}
 		else if(f_type == 4)
 		{
-			double m = 0.48 + 1.574 * now_e.omega -0.176 * now_e.omega * now_e.omega;
+			double m = 0.48 + 1.574 * now_e.omega - (0.176 * now_e.omega * now_e.omega);
 			double a = calc_a(now_e, t, m, f_type);
 			double b = 0.08664*(r*now_e.tc / now_e.pc);
 			
@@ -282,9 +285,10 @@ public class MainActivity extends Activity
 			{
 				double p = arg;
 				double A = p;
-				double B = r*t;
+				double B = -r*t;
 				double C = -p * b * b - b * r * t + a;
 				double D = -a * b;
+				System.out.println("a" + A +" b " + B + " c "+ C +" d " + D);
 				Solution ans = solve_3_equation(A, B, C, D);
 				return ans;
 			}
@@ -344,8 +348,8 @@ public class MainActivity extends Activity
 			ele_info = "";
 		else
 			ele_info = now_e.name + " tc=" +now_e.tc + " pc=" +now_e.pc + " omega="+now_e.omega;
-		String s_type = (type == VT2P) ? "v="+arg : "p=" + arg ;
-		String a_type = (type == VT2P) ? "p="+ans.toString() : "v=" + ans.toString() ;
+		String s_type = (type == VT2P) ? "v="+arg+"cm3/mol" : "p=" + arg +"MPa";
+		String a_type = (type == VT2P) ? "p="+ans.toString()+"Mpa" : "v=" + ans.toString()+"cm3/mol" ;
 		buffer = ele_info + "\n" + s_type + " " + a_type;
 		ans_area.setText(buffer);
 		return;
@@ -365,6 +369,12 @@ public class MainActivity extends Activity
 		go_button = (Button)findViewById(R.id.calcID);
 		ans_area = (TextView)findViewById(R.id.answerID);
 		
+		mat_text = (TextView)findViewById(R.id.materialTextID);
+		tc_box = (EditText)findViewById(R.id.tcID);
+		pc_box = (EditText)findViewById(R.id.pcID);
+		omega_box = (EditText)findViewById(R.id.omegaID);
+		mode_btn = (Button)findViewById(R.id.modeID);
+		
 		ele_list = new ArrayList<Element>();
 		formula_list = new ArrayList<Formula>();
 		
@@ -375,7 +385,17 @@ public class MainActivity extends Activity
 		{
 			public void onClick(View arg0)
 			{
-				String tar_name = name_box.getText().toString();
+				String tar_name="", tc_string="", pc_string="", omega_string="";
+				if(!manual)
+				{
+					tar_name = name_box.getText().toString();
+				}
+				else 
+				{
+					tc_string = tc_box.getText().toString();
+					pc_string = pc_box.getText().toString();
+					omega_string = omega_box.getText().toString();
+				}
 				String t_string = t_box.getText().toString();
 				String p_string = p_box.getText().toString();
 				String v_string = v_box.getText().toString();
@@ -410,6 +430,12 @@ public class MainActivity extends Activity
 							Toast.LENGTH_LONG).show();
 					return;
 				}
+				if(manual == true && ( pc_string.length()==0 || tc_string.length()==0 || omega_string.length()==0))
+				{
+					Toast.makeText(MainActivity.this,
+							"Tc, Pc, omega没有填写全",
+							Toast.LENGTH_LONG).show();
+				}
 				
 				int type;
 				double t = Double.parseDouble(t_string);
@@ -426,24 +452,35 @@ public class MainActivity extends Activity
 				}
 				
 				Element now_e = null;
-				if(f_type != 1)
+				if(!manual)
 				{
-					if(tar_name.length() == 0)
+					if(f_type != 1)
 					{
-						Toast.makeText(MainActivity.this, 
-								"没有填写物质的名称",
-								Toast.LENGTH_LONG).show();
-						return;
-					}	
+						if(tar_name.length() == 0)
+						{
+							Toast.makeText(MainActivity.this, 
+									"没有填写物质的名称",
+									Toast.LENGTH_LONG).show();
+							return;
+						}	
+					}
 					now_e = search(tar_name);
 					if(now_e==null)
 					{
 						Toast.makeText(MainActivity.this, 
-								tar_name+" 这种物质没有找到",
-								Toast.LENGTH_LONG).show();
+									tar_name+" 这种物质没有找到",
+									Toast.LENGTH_LONG).show();
 						return;
 					}
 				}
+				else
+				{
+					double pc = Double.parseDouble(pc_string);
+					double tc = Double.parseDouble(tc_string);
+					double omega = Double.parseDouble(omega_string);
+					now_e = new Element("新物质", tc, pc, omega);
+				}
+				
 				Solution ans = solve(now_e, arg, t, type, f_type);
 				ShowAnswer(now_e, arg, t, type, f_type, ans); //show all info
 			}
@@ -465,6 +502,36 @@ public class MainActivity extends Activity
 			public void onNothingSelected(AdapterView<?> arg0) {
 				// TODO Auto-generated method stub
 				f_type = -1;
+			}
+			
+		});
+		
+		mode_btn.setOnClickListener(new OnClickListener()
+		{
+
+			@Override
+			public void onClick(View arg0) 
+			{
+				if(!manual)
+				{
+					mat_text.setText("请手动输入新物质的信息");
+					name_box.setVisibility(View.GONE);
+					tc_box.setVisibility(View.VISIBLE);
+					pc_box.setVisibility(View.VISIBLE);
+					omega_box.setVisibility(View.VISIBLE);
+					mode_btn.setText("检索已有物质");
+					manual = true;
+				}
+				else 
+				{
+					mat_text.setText("物质的名称：（中文，理想气体方程可不写）");
+					tc_box.setVisibility(View.GONE);
+					pc_box.setVisibility(View.GONE);
+					omega_box.setVisibility(View.GONE);
+					name_box.setVisibility(View.VISIBLE);
+					mode_btn.setText("手动输入新物质");
+					manual = false;
+				}
 			}
 			
 		});

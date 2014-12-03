@@ -10,6 +10,7 @@
     tools:context=".MainActivity" >
     
     <TextView
+        android:id="@+id/materialTextID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="物质的名称：（中文，理想气体方程可不写）"/>
@@ -19,6 +20,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="物质的名称"/>
+    
+    <EditText
+        android:id = "@+id/tcID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:inputType="numberDecimal"
+        android:hint="输入tc(K)"/>
+    
+    <EditText
+        android:id = "@+id/pcID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:inputType="numberDecimal"
+        android:hint="输入pc(MPa)"/>
+    
+    <EditText
+        android:id = "@+id/omegaID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:inputType="numberDecimal"
+        android:hint="输入ω"/>
+    
+    <Button
+        android:id = "@+id/modeID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="手动输入新物质"/>
     
     <TextView
         android:layout_width="wrap_content"
@@ -45,13 +76,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="V(m³)"/>
+        android:text="V(cm³)"/>
     <EditText
         android:id="@+id/vID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:hint="V(m³)，PV填写一个即可"/>
+        android:hint="V(cm³)，PV填写一个即可"/>
     
 	<Spinner
         android:id="@+id/spinnerID"
@@ -66,6 +97,7 @@
 	
 	<TextView
 	    android:id="@+id/answerID"
+	    android:textSize="20sp"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"/>
 	
