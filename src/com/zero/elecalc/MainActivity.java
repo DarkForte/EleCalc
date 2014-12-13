@@ -70,7 +70,7 @@ class Solution
 
 public class MainActivity extends Activity 
 {
-	TextView mat_text;
+	TextView mat_text, tc_text, pc_text, omega_text;
 	EditText name_box, t_box, p_box, v_box, tc_box, pc_box, omega_box;
 	Button mode_btn;
 	Spinner choose_spinner;
@@ -371,8 +371,11 @@ public class MainActivity extends Activity
 		
 		mat_text = (TextView)findViewById(R.id.materialTextID);
 		tc_box = (EditText)findViewById(R.id.tcID);
+		tc_text = (TextView)findViewById(R.id.tcTextID);
 		pc_box = (EditText)findViewById(R.id.pcID);
+		pc_text = (TextView)findViewById(R.id.pcTextID);
 		omega_box = (EditText)findViewById(R.id.omegaID);
+		omega_text = (TextView)findViewById(R.id.omegaTextID);
 		mode_btn = (Button)findViewById(R.id.modeID);
 		
 		ele_list = new ArrayList<Element>();
@@ -430,11 +433,25 @@ public class MainActivity extends Activity
 							Toast.LENGTH_LONG).show();
 					return;
 				}
-				if(manual == true && ( pc_string.length()==0 || tc_string.length()==0 || omega_string.length()==0))
+				if(manual == true && ( pc_string.length()==0 || tc_string.length()==0))
 				{
 					Toast.makeText(MainActivity.this,
-							"Tc, Pc, omega没有填写全",
+							"Tc, Pc没有填写全",
 							Toast.LENGTH_LONG).show();
+					return;
+				}
+				if(manual == true && omega_string.length() ==0)
+				{
+					if(f_type >= 4)
+					{	Toast.makeText(MainActivity.this,
+								"这个方程必须填写omega",
+								Toast.LENGTH_LONG).show();
+						return;
+					}
+					else 
+					{	
+						omega_string = "0";
+					}
 				}
 				
 				int type;
@@ -516,8 +533,11 @@ public class MainActivity extends Activity
 				{
 					mat_text.setText("请手动输入新物质的信息");
 					name_box.setVisibility(View.GONE);
+					tc_text.setVisibility(View.VISIBLE);
 					tc_box.setVisibility(View.VISIBLE);
+					pc_text.setVisibility(View.VISIBLE);
 					pc_box.setVisibility(View.VISIBLE);
+					omega_text.setVisibility(View.VISIBLE);
 					omega_box.setVisibility(View.VISIBLE);
 					mode_btn.setText("检索已有物质");
 					manual = true;
@@ -525,8 +545,11 @@ public class MainActivity extends Activity
 				else 
 				{
 					mat_text.setText("物质的名称：（中文，理想气体方程可不写）");
+					tc_text.setVisibility(View.GONE);
 					tc_box.setVisibility(View.GONE);
+					pc_text.setVisibility(View.GONE);
 					pc_box.setVisibility(View.GONE);
+					omega_text.setVisibility(View.GONE);
 					omega_box.setVisibility(View.GONE);
 					name_box.setVisibility(View.VISIBLE);
 					mode_btn.setText("手动输入新物质");
